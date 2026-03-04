@@ -1,6 +1,7 @@
 import { getAuth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import imagekit from "@/config/imageKit";
 
 export async function POST(request) {
     try {
@@ -14,7 +15,7 @@ export async function POST(request) {
         const description = formData.get("description");
         const username = formData.get("username");
         const address = formData.get("address");
-        const logo = formData.get("logo") || "";
+        const logo = formData.get("logo");
         const email = formData.get("email");
         const contact = formData.get("contact");
 
@@ -38,6 +39,19 @@ export async function POST(request) {
             return NextResponse.json({ error: "Username already taken" }, { status: 400 });
         }
 
+        let logoUrl = "";
+        if (logo && typeof logo !== "string") {
+            const buffer = Buffer.from(await logo.arrayBuffer());
+            const uploadResponse = await imagekit.upload({
+                file: buffer,
+                fileName: logo.name,
+                folder: "stores",
+            });
+            logoUrl = uploadResponse.url;
+        } else {
+            logoUrl = logo || "";
+        }
+
         const newStore = await prisma.store.create({
             data: {
                 userId,
@@ -45,7 +59,7 @@ export async function POST(request) {
                 description,
                 username,
                 address,
-                logo,
+                logo: logoUrl,
                 email,
                 contact,
                 status: "pending",
