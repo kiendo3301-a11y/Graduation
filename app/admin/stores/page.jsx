@@ -11,13 +11,37 @@ export default function AdminStores() {
     const [loading, setLoading] = useState(true)
 
     const fetchStores = async () => {
-        setStores(storesDummyData)
-        setLoading(false)
+        try {
+            const response = await fetch("/api/admin/stores")
+            const data = await response.json()
+            if (response.ok) {
+                // Show only approved stores in the live list
+                setStores(data.stores.filter(s => s.status === 'approved'))
+            }
+        } catch (error) {
+            console.error("Error fetching stores:", error)
+        } finally {
+            setLoading(false)
+        }
     }
 
     const toggleIsActive = async (storeId) => {
-        // Logic to toggle the status of a store
-
+        try {
+            const response = await fetch("/api/admin/toggle-active", {
+                method: "POST",
+                body: JSON.stringify({ storeId })
+            })
+            const data = await response.json()
+            if (response.ok) {
+                toast.success(data.message)
+                fetchStores() // Refresh the list
+            } else {
+                toast.error(data.error)
+                throw new Error(data.error)
+            }
+        } catch (error) {
+            console.error("Error toggling store status:", error)
+        }
     }
 
     useEffect(() => {

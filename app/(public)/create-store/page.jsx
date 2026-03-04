@@ -19,7 +19,7 @@ export default function CreateStore() {
         email: "",
         contact: "",
         address: "",
-        image: ""
+        logo: ""
     })
 
     const onChangeHandler = (e) => {
@@ -27,17 +27,52 @@ export default function CreateStore() {
     }
 
     const fetchSellerStatus = async () => {
-        // Logic to check if the store is already submitted
-
-
-        setLoading(false)
+        try {
+            const response = await fetch("/api/store/is-seller")
+            const data = await response.json()
+            if (data.isSeller || data.storeId) {
+                setAlreadySubmitted(true)
+                setMessage("Your store is currently under review or already active.")
+            }
+        } catch (error) {
+            console.error("Error fetching seller status:", error)
+        } finally {
+            setLoading(false)
+        }
     }
 
     const onSubmitHandler = async (e) => {
         e.preventDefault()
-        // Logic to submit the store details
 
+        if (!storeInfo.logo) {
+            toast.error("Please upload a store logo")
+            return
+        }
 
+        const formData = new FormData()
+        formData.append("name", storeInfo.name)
+        formData.append("username", storeInfo.username)
+        formData.append("description", storeInfo.description)
+        formData.append("email", storeInfo.email)
+        formData.append("contact", storeInfo.contact)
+        formData.append("address", storeInfo.address)
+        formData.append("logo", storeInfo.logo)
+
+        const response = await fetch("/api/store/create", {
+            method: "POST",
+            body: formData
+        })
+
+        const data = await response.json()
+
+        if (response.ok) {
+            toast.success(data.message)
+            setAlreadySubmitted(true)
+            setMessage(data.message)
+        } else {
+            toast.error(data.error)
+            throw new Error(data.error)
+        }
     }
 
     useEffect(() => {
@@ -57,8 +92,8 @@ export default function CreateStore() {
 
                         <label className="mt-10 cursor-pointer">
                             Store Logo
-                            <Image src={storeInfo.image ? URL.createObjectURL(storeInfo.image) : assets.upload_area} className="rounded-lg mt-2 h-16 w-auto" alt="" width={150} height={100} />
-                            <input type="file" accept="image/*" onChange={(e) => setStoreInfo({ ...storeInfo, image: e.target.files[0] })} hidden />
+                            <Image src={storeInfo.logo ? URL.createObjectURL(storeInfo.logo) : assets.upload_area} className="rounded-lg mt-2 h-16 w-auto" alt="" width={150} height={100} />
+                            <input type="file" accept="image/*" onChange={(e) => setStoreInfo({ ...storeInfo, logo: e.target.files[0] })} hidden />
                         </label>
 
                         <p>Username</p>

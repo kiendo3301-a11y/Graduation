@@ -15,9 +15,24 @@ const StoreLayout = ({ children }) => {
     const [storeInfo, setStoreInfo] = useState(null)
 
     const fetchIsSeller = async () => {
-        setIsSeller(true)
-        setStoreInfo(dummyStoreData)
-        setLoading(false)
+        try {
+            const response = await fetch("/api/store/is-seller")
+            const data = await response.json()
+            if (data.isSeller) {
+                setIsSeller(true)
+                // Fetch full store data
+                const storeResponse = await fetch("/api/store/data")
+                const storeData = await storeResponse.json()
+                setStoreInfo(storeData.store)
+            } else {
+                setIsSeller(false)
+            }
+        } catch (error) {
+            console.error("Error fetching seller status:", error)
+            setIsSeller(false)
+        } finally {
+            setLoading(false)
+        }
     }
 
     useEffect(() => {

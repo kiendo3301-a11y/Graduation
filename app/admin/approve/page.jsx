@@ -12,18 +12,41 @@ export default function AdminApprove() {
 
 
     const fetchStores = async () => {
-        setStores(storesDummyData)
-        setLoading(false)
+        try {
+            const response = await fetch("/api/admin/stores")
+            const data = await response.json()
+            if (response.ok) {
+                // Filter only stores that are pending
+                setStores(data.stores.filter(s => s.status === 'pending'))
+            }
+        } catch (error) {
+            console.error("Error fetching stores:", error)
+        } finally {
+            setLoading(false)
+        }
     }
 
     const handleApprove = async ({ storeId, status }) => {
-        // Logic to approve a store
-
-
+        try {
+            const response = await fetch("/api/admin/approve", {
+                method: "POST",
+                body: JSON.stringify({ storeId, status })
+            })
+            const data = await response.json()
+            if (response.ok) {
+                toast.success(data.message)
+                fetchStores() // Refresh the list
+            } else {
+                toast.error(data.error)
+                throw new Error(data.error)
+            }
+        } catch (error) {
+            console.error("Error approving store:", error)
+        }
     }
 
     useEffect(() => {
-            fetchStores()
+        fetchStores()
     }, [])
 
     return !loading ? (
