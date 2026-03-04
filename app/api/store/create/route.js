@@ -11,13 +11,17 @@ export async function POST(request) {
         }
 
         const formData = await request.formData();
-        const name = formData.get("name");
-        const description = formData.get("description");
-        const username = formData.get("username");
-        const address = formData.get("address");
+
+        // Ensure all fields are strings to avoid Prisma serialization errors
+        const name = String(formData.get("name") || "");
+        const description = String(formData.get("description") || "");
+        const username = String(formData.get("username") || "");
+        const address = String(formData.get("address") || "");
+        const email = String(formData.get("email") || "");
+        const contact = String(formData.get("contact") || "");
         const logo = formData.get("logo");
-        const email = formData.get("email");
-        const contact = formData.get("contact");
+
+        console.log("Creating store for user:", userId, { name, username, logoType: typeof logo });
 
         if (!name || !description || !username || !address || !email || !contact) {
             return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -40,26 +44,37 @@ export async function POST(request) {
         }
 
         let logoUrl = "";
-        if (logo && typeof logo !== "string") {
-            const buffer = Buffer.from(await logo.arrayBuffer());
-            const uploadResponse = await imagekit.upload({
-                file: buffer,
-                fileName: logo.name,
-                folder: "stores",
-            });
-            logoUrl = uploadResponse.url;
-        } else {
-            logoUrl = logo || "";
+        // More robust check for File/Blob object
+        if (logo && typeof logo === 'object' && typeof logo.arrayBuffer === 'function') {
+            try {
+                console.log("Uploading logo to ImageKit...");
+                const buffer = Buffer.from(await logo.arrayBuffer());
+                const uploadResponse = await imagekit.upload({
+                    file: buffer,
+                    fileName: logo.name || `logo-${userId}`,
+                    folder: "stores",
+                });
+                logoUrl = uploadResponse.url;
+                console.log("Logo uploaded successfully:", logoUrl);
+            } catch (uploadError) {
+                console.error("ImageKit upload error:", uploadError);
+                // Fallback to empty string if upload fails, or return error
+                return NextResponse.json({ error: "Failed to upload logo: " + uploadError.message }, { status: 500 });
+            }
+        } else if (typeof logo === 'string') {
+            logoUrl = logo;
         }
+
+        console.log("Invoking prisma.store.create with logo:", typeof logoUrl === 'string' ? "string" : typeof logoUrl);
 
         const newStore = await prisma.store.create({
             data: {
-                userId,
+                userId: String(userId),
                 name,
                 description,
                 username,
                 address,
-                logo: logoUrl,
+                logo: logoUrl || "",
                 email,
                 contact,
                 status: "pending",
@@ -73,6 +88,6 @@ export async function POST(request) {
         });
     } catch (error) {
         console.error("POST /api/store/create Error:", error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
+        return NextResponse.json({ error: error.message || "Internal Server Error" }, { status: 500 });
     }
 }
