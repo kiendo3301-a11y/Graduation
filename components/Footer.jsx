@@ -12,25 +12,25 @@ const Footer = () => {
 
     const linkSections = [
         {
-            title: "PRODUCTS",
+            title: "SẢN PHẨM",
             links: [
-                { text: "Earphones", path: '/', icon: null },
-                { text: "Headphones", path: '/', icon: null },
-                { text: "Smartphones", path: '/', icon: null },
-                { text: "Laptops", path: '/', icon: null },
+                { text: "Tai nghe", path: '/', icon: null },
+                { text: "Tai nghe chụp tai", path: '/', icon: null },
+                { text: "Điện thoại thông minh", path: '/', icon: null },
+                { text: "Máy tính xách tay", path: '/', icon: null },
             ]
         },
         {
-            title: "WEBSITE?",
+            title: "HỖ TRỢ",
             links: [
-                { text: "Home", path: '/', icon: null },
-                { text: "Privacy Policy", path: '/', icon: null },
-                { text: "Become Plus Member", path: '/pricing', icon: null },
-                { text: "Create Your Store", path: '/create-store', icon: null },
+                { text: "Trang chủ", path: '/', icon: null },
+                { text: "Chính sách bảo mật", path: '/', icon: null },
+                { text: "Trở thành thành viên Plus", path: '/pricing', icon: null },
+                { text: "Tạo cửa hàng của bạn", path: '/create-store', icon: null },
             ]
         },
         {
-            title: "CONTACT",
+            title: "LIÊN HỆ",
             links: [
                 { text: "+1-212-456-7890", path: '/', icon: MailIcon },
                 { text: "contact@example.com", path: '/', icon: PhoneIcon },
@@ -54,7 +54,7 @@ const Footer = () => {
                         <Link href="/" className="text-4xl font-semibold text-slate-700">
                             <span className="text-green-600">go</span>cart<span className="text-green-600 text-5xl leading-0">.</span>
                         </Link>
-                        <p className="max-w-[410px] mt-6 text-sm">Welcome to gocart, your ultimate destination for the latest and smartest gadgets. From smartphones and smartwatches to essential accessories, we bring you the best in innovation — all in one place.</p>
+                        <p className="max-w-[410px] mt-6 text-sm">Chào mừng bạn đến với gocart, điểm đến lý tưởng cho những thiết bị công nghệ mới nhất và thông minh nhất. Từ điện thoại thông minh và đồng hồ thông minh đến các phụ kiện thiết yếu, chúng tôi mang đến cho bạn sự đổi mới tốt nhất — tất cả ở một nơi.</p>
                         <div className="flex items-center gap-3 mt-5">
                             {socialIcons.map((item, i) => (
                                 <Link href={item.link} key={i} className="flex items-center justify-center w-10 h-10 bg-slate-100 hover:scale-105 hover:border border-slate-300 transition rounded-full">
@@ -80,7 +80,7 @@ const Footer = () => {
                     </div>
                 </div>
                 <p className="py-4 text-sm text-slate-500">
-                    Copyright 2025 © gocart All Right Reserved.
+                    Bản quyền 2025 © gocart. Bảo lưu mọi quyền.
                 </p>
             </div>
         </footer>

@@ -36,7 +36,7 @@ export default function AddProduct() {
             formData.append("images", img)
         })
 
-        const loadingToast = toast.loading("Adding product...")
+        const loadingToast = toast.loading("Đang thêm sản phẩm...")
         try {
             const response = await fetch("/api/store/product", {
                 method: "POST",
@@ -51,15 +51,15 @@ export default function AddProduct() {
                 toast.error(data.error, { id: loadingToast })
             }
         } catch (error) {
-            toast.error("Something went wrong", { id: loadingToast })
+            toast.error("Đã xảy ra lỗi", { id: loadingToast })
         }
     }
 
     return (
         <div className="max-w-4xl">
-            <h1 className="text-2xl font-medium text-slate-800">Add Product</h1>
+            <h1 className="text-2xl font-medium text-slate-800">Thêm sản phẩm</h1>
             <form onSubmit={onSubmitHandler} className="mt-8 flex flex-col gap-4 text-slate-600">
-                <p>Product Images</p>
+                <p>Hình ảnh sản phẩm</p>
                 <div className="flex flex-wrap gap-3">
                     {images.map((img, index) => (
                         <div key={index} className="relative group">
@@ -75,15 +75,15 @@ export default function AddProduct() {
                     </label>
                 </div>
 
-                <p>Product Name</p>
-                <input name="name" onChange={onChangeHandler} value={productData.name} type="text" placeholder="Type here" className="border border-slate-300 outline-none p-2.5 rounded max-w-lg" required />
+                <p>Tên sản phẩm</p>
+                <input name="name" onChange={onChangeHandler} value={productData.name} type="text" placeholder="Nhập tại đây" className="border border-slate-300 outline-none p-2.5 rounded max-w-lg" required />
 
-                <p>Product Description</p>
-                <textarea name="description" onChange={onChangeHandler} value={productData.description} rows={4} placeholder="Write content here" className="border border-slate-300 outline-none p-2.5 rounded max-w-lg resize-none" required />
+                <p>Mô tả sản phẩm</p>
+                <textarea name="description" onChange={onChangeHandler} value={productData.description} rows={4} placeholder="Viết nội dung tại đây" className="border border-slate-300 outline-none p-2.5 rounded max-w-lg resize-none" required />
 
                 <div className="flex flex-wrap gap-5">
                     <div>
-                        <p>Category</p>
+                        <p>Danh mục</p>
                         <select name="category" onChange={onChangeHandler} value={productData.category} className="border border-slate-300 outline-none p-2.5 rounded w-44">
                             {categories.map((cat, index) => (
                                 <option key={index} value={cat}>{cat}</option>
@@ -91,16 +91,16 @@ export default function AddProduct() {
                         </select>
                     </div>
                     <div>
-                        <p>Product Price</p>
+                        <p>Giá sản phẩm</p>
                         <input name="price" onChange={onChangeHandler} value={productData.price} type="number" placeholder="0" className="border border-slate-300 outline-none p-2.5 rounded w-44" required />
                     </div>
                     <div>
-                        <p>Offer Price (Optional)</p>
+                        <p>Giá ưu đãi (Tùy chọn)</p>
                         <input name="offerPrice" onChange={onChangeHandler} value={productData.offerPrice} type="number" placeholder="0" className="border border-slate-300 outline-none p-2.5 rounded w-44" />
                     </div>
                 </div>
 
-                <button className="bg-slate-800 text-white px-10 py-2.5 rounded mt-5 hover:bg-slate-900 transition w-fit">Add Product</button>
+                <button className="bg-slate-800 text-white px-10 py-2.5 rounded mt-5 hover:bg-slate-900 transition w-fit">Thêm sản phẩm</button>
             </form>
         </div>
     )

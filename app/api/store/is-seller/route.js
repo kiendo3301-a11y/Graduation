@@ -9,11 +9,14 @@ export async function GET(request) {
             return NextResponse.json({ isSeller: false }, { status: 401 });
         }
 
-        const storeId = await authSeller(userId);
+        const store = await prisma.store.findUnique({
+            where: { userId }
+        });
 
         return NextResponse.json({
-            isSeller: !!storeId,
-            storeId: storeId || null
+            isSeller: !!(store && store.isActive),
+            status: store ? store.status : null,
+            storeId: store ? store.id : null
         });
     } catch (error) {
         return NextResponse.json({ error: error.message }, { status: 500 });

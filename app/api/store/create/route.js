@@ -27,6 +27,17 @@ export async function POST(request) {
             return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
         }
 
+        // Check if user exists in our database (to avoid foreign key constraint error)
+        const userExists = await prisma.user.findUnique({
+            where: { id: userId }
+        });
+
+        if (!userExists) {
+            return NextResponse.json({
+                error: "User account not found in database. Please wait a moment for sync or try re-logging."
+            }, { status: 404 });
+        }
+
         // Check if user already has a store
         const existingStore = await prisma.store.findUnique({
             where: { userId }
